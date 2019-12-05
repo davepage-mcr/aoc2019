@@ -91,6 +91,42 @@ def do_jif(program, pos, modes):
             print("\t", arg_a, "is nonzero, doing nothing")
         return([0, 3])
 
+def do_lt(program, pos, modes):
+    if args.verbose:
+        print("\t", program[pos:pos+3])
+    arg_a = decode_argument( program, program[pos+1], modes[0] )
+    arg_b = decode_argument( program, program[pos+2], modes[1] )
+    arg_c = program[pos+3]
+
+    if arg_a < arg_b:
+        if args.verbose:
+            print("\t", arg_a, "is less than", arg_b, "; storing 1 at", arg_c)
+        program[arg_c] = 1
+    else:
+        if args.verbose:
+            print("\t", arg_a, "is not less than", arg_b, "; storing 0 at", arg_c)
+        program[arg_c] = 0
+
+    return([0, 4])
+
+def do_eq(program, pos, modes):
+    if args.verbose:
+        print("\t", program[pos:pos+3])
+    arg_a = decode_argument( program, program[pos+1], modes[0] )
+    arg_b = decode_argument( program, program[pos+2], modes[1] )
+    arg_c = program[pos+3]
+
+    if arg_a == arg_b:
+        if args.verbose:
+            print("\t", arg_a, "is equal to", arg_b, "; storing 1 at", arg_c)
+        program[arg_c] = 1
+    else:
+        if args.verbose:
+            print("\t", arg_a, "is not equal to", arg_b, "; storing 0 at", arg_c)
+        program[arg_c] = 0
+
+    return([0, 4])
+
 def compute(program):
     pos=0
     while(1):
@@ -114,6 +150,10 @@ def compute(program):
             inst_len = do_jit(program, pos, modes)
         elif opcode == 6:
             inst_len = do_jif(program, pos, modes)
+        elif opcode == 7:
+            inst_len = do_lt(program, pos, modes)
+        elif opcode == 8:
+            inst_len = do_eq(program, pos, modes)
         else:
             print("Unrecognised opcode", opcode, "at position", pos)
             print(program)
