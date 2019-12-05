@@ -24,7 +24,7 @@ def do_add(program, pos, modes):
     if args.verbose:
         print("\tSum values", arg_a, arg_b, "into", pos_t)
     program[pos_t] = arg_a + arg_b
-    return( 4 )
+    return( [0, 4] )
 
 def do_mult(program, pos, modes):
     if args.verbose:
@@ -35,7 +35,7 @@ def do_mult(program, pos, modes):
     if args.verbose:
         print("\tMultiply values", arg_a, arg_b, "into", pos_t)
     program[pos_t] = arg_a * arg_b
-    return( 4 )
+    return( [0, 4] )
 
 def do_input(program, pos):
     if args.verbose:
@@ -51,7 +51,7 @@ def do_input(program, pos):
         print("\tStoring input value", value, "at location", arg_a)
     program[arg_a] = value
 
-    return( 2 )
+    return( [0, 2] )
 
 def do_output(program, pos, modes):
     if args.verbose:
@@ -59,7 +59,7 @@ def do_output(program, pos, modes):
     arg_a = decode_argument( program, program[pos+1], modes[0] )
 
     print("Output:", arg_a)
-    return( 2 )
+    return( [0, 2] )
 
 def do_jit(program, pos, modes):
     if args.verbose:
@@ -70,12 +70,11 @@ def do_jit(program, pos, modes):
     if arg_a != 0:
         if args.verbose:
             print("\t", arg_a, "is nonzero, jumping to", arg_b)
-        pos = arg_b
-        return(0)
+        return([1, arg_b])
     else:
         if args.verbose:
             print("\t", arg_a, "is zero, doing nothing")
-        return(3)
+        return([0, 3])
 
 def compute(program):
     pos=0
@@ -102,7 +101,14 @@ def compute(program):
             print("Unrecognised opcode", opcode, "at position", pos)
             print(program)
             exit(1)
-        pos += inst_len
+
+        if inst_len[0] == 0:    # We've returned a relative jump for pos
+            pos += inst_len[1]
+        elif inst_len[0] == 1:  # Absolute position
+            pos = inst_len[1]
+        else:
+            print("Unexpected return type", inst_len[0])
+            exit(1)
 
 # Parse command-line arguments
 parser = argparse.ArgumentParser()
