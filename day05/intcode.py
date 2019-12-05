@@ -33,7 +33,7 @@ def do_mult(program, pos, modes):
     program[pos_t] = arg_a * arg_b
     return( 4 )
 
-def do_input(program, pos, modes):
+def do_input(program, pos):
     if args.verbose:
         print("\t", program[pos:pos+2])
     arg_a = program[pos+1]
@@ -65,7 +65,7 @@ def compute(program):
         elif opcode == 2:
             inst_len = do_mult(program, pos, modes)
         elif opcode == 3:
-            inst_len = do_input(program, pos, modes)
+            inst_len = do_input(program, pos)
         else:
             print("Unrecognised opcode", opcode, "at position", pos)
             print(program)
