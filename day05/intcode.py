@@ -75,7 +75,8 @@ def compute(program):
 # Parse command-line arguments
 parser = argparse.ArgumentParser()
 parser.add_argument("--verbose", help="Print out each instruction as executed", action="store_true")
-parser.add_argument("filename", help="program input")
+parser.add_argument("filename", help="program source")
+parser.add_argument("input", help="input data", nargs="*", type=int)
 args = parser.parse_args()
 
 inputfile = open(args.filename)
