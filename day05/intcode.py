@@ -16,6 +16,8 @@ def decode_argument( program, argument, mode ):
         return( argument ) 
 
 def do_add(program, pos, modes):
+    if args.verbose:
+        print("\t", program[pos:pos+4])
     arg_a = decode_argument( program, program[pos+1], modes[0] )
     arg_b = decode_argument( program, program[pos+2], modes[1] )
     pos_t = program[pos+3]
@@ -25,6 +27,8 @@ def do_add(program, pos, modes):
     return( 4 )
 
 def do_mult(program, pos, modes):
+    if args.verbose:
+        print("\t", program[pos:pos+4])
     arg_a = decode_argument( program, program[pos+1], modes[0] )
     arg_b = decode_argument( program, program[pos+2], modes[1] )
     pos_t = program[pos+3]
@@ -94,4 +98,3 @@ for line in inputfile:
     program = [int(x) for x in line.split(',')]
 
     compute(program)
-    print("Final state:", program)
