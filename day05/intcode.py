@@ -54,40 +54,15 @@ def compute(program):
             exit(1)
         pos += 4
 
-def search(masterprogram, target):
-    # Brute-force program until we end up with target in program[0]
-    for noun in range(0,99+1):
-        for verb in range(0,99+1):
-            program = masterprogram.copy()
-            program[1] = noun
-            program[2] = verb
-
-            compute(program)
-
-            if program[0] == target:
-                print("Reached target with noun", noun, "verb", verb)
-                return
-
 # Parse command-line arguments
 parser = argparse.ArgumentParser()
-parser.add_argument("--debug", help="Apply 1202 program alarm debugging", action="store_true")
 parser.add_argument("--verbose", help="Print out each instruction as executed", action="store_true")
-parser.add_argument("--target", help="Search for noun and verb which produce this output", type=int)
 parser.add_argument("filename", help="program input")
 args = parser.parse_args()
 
 inputfile = open(args.filename)
 for line in inputfile:
     program = [int(x) for x in line.split(',')]
-
-    if args.target:
-        print("Searching for a target of", args.target)
-        search(program, args.target)
-        exit(0)
-
-    if args.debug:
-        program[1]=12
-        program[2]=2
 
     compute(program)
     print("Final state:", program)
