@@ -3,15 +3,15 @@
 import argparse
 
 def decode_argument( program, argument, mode ):
-    if args.verbose:
+    if args.decode:
         print("\tDecoding argument", argument, "with mode", mode)
 
     if mode == 0:
-        if args.verbose:
+        if args.decode:
             print("\tPosition mode;", argument, "is an address containing", program[argument])
         return( program[argument] )
     else:
-        if args.verbose:
+        if args.decode:
             print("\tImmediate mode;", argument, "is a value")
         return( argument ) 
 
@@ -170,6 +170,7 @@ def compute(program):
 # Parse command-line arguments
 parser = argparse.ArgumentParser()
 parser.add_argument("--verbose", help="Print out each instruction as executed", action="store_true")
+parser.add_argument("--decode", help="Print out argument decoding", action="store_true")
 parser.add_argument("filename", help="program source")
 parser.add_argument("input", help="input data", nargs="*", type=int)
 args = parser.parse_args()
