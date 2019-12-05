@@ -44,9 +44,17 @@ def do_input(program, pos):
 
     value = args.input.pop(0)
     if args.verbose:
-        print("\tStoring value", value, "at location", arg_a)
+        print("\tStoring input value", value, "at location", arg_a)
     program[arg_a] = value
 
+    return( 2 )
+
+def do_output(program, pos, modes):
+    if args.verbose:
+        print("\t", program[pos:pos+2])
+    arg_a = decode_argument( program, program[pos+1], modes[0] )
+
+    print("Output:", arg_a)
     return( 2 )
 
 def compute(program):
@@ -66,6 +74,8 @@ def compute(program):
             inst_len = do_mult(program, pos, modes)
         elif opcode == 3:
             inst_len = do_input(program, pos)
+        elif opcode == 4:
+            inst_len = do_output(program, pos, modes)
         else:
             print("Unrecognised opcode", opcode, "at position", pos)
             print(program)
