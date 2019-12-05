@@ -22,6 +22,7 @@ def do_add(program, pos, modes):
     if args.verbose:
         print("\tSum values", arg_a, arg_b, "into", pos_t)
     program[pos_t] = arg_a + arg_b
+    return( 4 )
 
 def do_mult(program, pos, modes):
     arg_a = decode_argument( program, program[pos+1], modes[0] )
@@ -30,6 +31,7 @@ def do_mult(program, pos, modes):
     if args.verbose:
         print("\tMultiply values", arg_a, arg_b, "into", pos_t)
     program[pos_t] = arg_a * arg_b
+    return( 4 )
 
 def compute(program):
     if args.verbose:
@@ -45,14 +47,14 @@ def compute(program):
         if opcode == 99:
             return
         elif opcode == 1:
-            do_add(program, pos, modes)
+            inst_len = do_add(program, pos, modes)
         elif opcode == 2:
-            do_mult(program, pos, modes)
+            inst_len = do_mult(program, pos, modes)
         else:
             print("Unrecognised opcode", opcode, "at position", pos)
             print(program)
             exit(1)
-        pos += 4
+        pos += inst_len
 
 # Parse command-line arguments
 parser = argparse.ArgumentParser()
