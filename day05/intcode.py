@@ -33,9 +33,23 @@ def do_mult(program, pos, modes):
     program[pos_t] = arg_a * arg_b
     return( 4 )
 
-def compute(program):
+def do_input(program, pos, modes):
     if args.verbose:
-        print("### New program", program)
+        print("\t", program[pos:pos+2])
+    arg_a = program[pos+1]
+
+    if len(args.input) == 0:
+        print("Want to receive input but we have none!")
+        exit(1)
+
+    value = args.input.pop(0)
+    if args.verbose:
+        print("\tStoring value", value, "at location", arg_a)
+    program[arg_a] = value
+
+    return( 2 )
+
+def compute(program):
     pos=0
     while(1):
         if args.verbose:
@@ -50,6 +64,8 @@ def compute(program):
             inst_len = do_add(program, pos, modes)
         elif opcode == 2:
             inst_len = do_mult(program, pos, modes)
+        elif opcode == 3:
+            inst_len = do_input(program, pos, modes)
         else:
             print("Unrecognised opcode", opcode, "at position", pos)
             print(program)
