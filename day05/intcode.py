@@ -76,6 +76,21 @@ def do_jit(program, pos, modes):
             print("\t", arg_a, "is zero, doing nothing")
         return([0, 3])
 
+def do_jif(program, pos, modes):
+    if args.verbose:
+        print("\t", program[pos:pos+3])
+    arg_a = decode_argument( program, program[pos+1], modes[0] )
+    arg_b = decode_argument( program, program[pos+2], modes[1] )
+
+    if arg_a == 0:
+        if args.verbose:
+            print("\t", arg_a, "is zero, jumping to", arg_b)
+        return([1, arg_b])
+    else:
+        if args.verbose:
+            print("\t", arg_a, "is nonzero, doing nothing")
+        return([0, 3])
+
 def compute(program):
     pos=0
     while(1):
@@ -97,6 +112,8 @@ def compute(program):
             inst_len = do_output(program, pos, modes)
         elif opcode == 5:
             inst_len = do_jit(program, pos, modes)
+        elif opcode == 6:
+            inst_len = do_jif(program, pos, modes)
         else:
             print("Unrecognised opcode", opcode, "at position", pos)
             print(program)
