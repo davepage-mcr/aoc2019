@@ -37,28 +37,29 @@ def do_mult(program, pos, modes):
     program[pos_t] = arg_a * arg_b
     return( [0, 4] )
 
-def do_input(program, pos):
+def do_input(program, pos, inputdata):
     if args.verbose:
         print("\t", program[pos:pos+2])
     arg_a = program[pos+1]
 
-    if len(args.input) == 0:
+    if len(inputdata) == 0:
         print("Want to receive input but we have none!")
         exit(1)
 
-    value = args.input.pop(0)
+    value = inputdata.pop(0)
     if args.verbose:
         print("\tStoring input value", value, "at location", arg_a)
     program[arg_a] = value
 
     return( [0, 2] )
 
-def do_output(program, pos, modes):
+def do_output(program, pos, modes, output):
     if args.verbose:
         print("\t", program[pos:pos+2])
     arg_a = decode_argument( program, program[pos+1], modes[0] )
 
-    print("Output:", arg_a)
+    output.append(arg_a)
+
     return( [0, 2] )
 
 def do_jit(program, pos, modes):
@@ -127,8 +128,9 @@ def do_eq(program, pos, modes):
 
     return([0, 4])
 
-def compute(program):
+def compute(program, inputdata):
     pos=0
+    output = []
     while(1):
         if args.verbose:
             print("# Looking for opcode at", pos, ":", program[pos])
@@ -137,15 +139,15 @@ def compute(program):
         modes = [ ( program[pos] // dec ) % 10 for dec in [ 100, 1000, 10000 ] ]
 
         if opcode == 99:
-            return
+            return(output)
         elif opcode == 1:
             inst_len = do_add(program, pos, modes)
         elif opcode == 2:
             inst_len = do_mult(program, pos, modes)
         elif opcode == 3:
-            inst_len = do_input(program, pos)
+            inst_len = do_input(program, pos, inputdata)
         elif opcode == 4:
-            inst_len = do_output(program, pos, modes)
+            inst_len = do_output(program, pos, modes, output)
         elif opcode == 5:
             inst_len = do_jit(program, pos, modes)
         elif opcode == 6:
@@ -172,11 +174,12 @@ parser = argparse.ArgumentParser()
 parser.add_argument("--verbose", help="Print out each instruction as executed", action="store_true")
 parser.add_argument("--decode", help="Print out argument decoding", action="store_true")
 parser.add_argument("filename", help="program source")
-parser.add_argument("input", help="input data", nargs="*", type=int)
+parser.add_argument("inputdata", help="input data", nargs="*", type=int)
 args = parser.parse_args()
 
 inputfile = open(args.filename)
 for line in inputfile:
     program = [int(x) for x in line.split(',')]
 
-    compute(program)
+    output = compute(program, args.inputdata)
+    print("Output:", output)
