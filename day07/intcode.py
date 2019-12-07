@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 
 import argparse
+from itertools import permutations
 
 def decode_argument( program, argument, mode ):
     if args.decode:
@@ -174,12 +175,27 @@ parser = argparse.ArgumentParser()
 parser.add_argument("--verbose", help="Print out each instruction as executed", action="store_true")
 parser.add_argument("--decode", help="Print out argument decoding", action="store_true")
 parser.add_argument("filename", help="program source")
-parser.add_argument("inputdata", help="input data", nargs="*", type=int)
 args = parser.parse_args()
 
 inputfile = open(args.filename)
 for line in inputfile:
     program = [int(x) for x in line.split(',')]
 
-    output = compute(program, args.inputdata)
-    print("Output:", output)
+    # Daisy chain five computers with different args, test which output gets highest value
+    max_signal = 0
+    for perm in permutations(range(0,5)):
+        if args.verbose:
+            print("Trying permutation of phase settings:", perm)
+
+        signal = 0
+        for phase in perm:
+            if args.verbose:
+                print("\tUsing phase setting", phase, "and input signal", signal)
+            signal = compute(program.copy(), [phase, signal])[0]
+            if args.verbose:
+                print("Output from this instance", signal)
+
+        if signal > max_signal:
+            max_signal = signal
+
+    print("Max thruster signal", max_signal)
