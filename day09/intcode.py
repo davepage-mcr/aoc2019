@@ -202,6 +202,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument("--verbose", help="Print out each instruction as executed", action="store_true")
 parser.add_argument("--decode", help="Print out argument decoding", action="store_true")
 parser.add_argument("filename", help="program source")
+parser.add_argument("input", help="input data", nargs="*", type=int)
 args = parser.parse_args()
 
 inputfile = open(args.filename)
@@ -209,6 +210,6 @@ for line in inputfile:
     program = [int(x) for x in line.split(',')]
 
     computer = IntCode(program.copy())
-    output = computer.compute([])
+    output = computer.compute(args.input)
 
     print("Output:", output)
