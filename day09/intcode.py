@@ -187,22 +187,7 @@ inputfile = open(args.filename)
 for line in inputfile:
     program = [int(x) for x in line.split(',')]
 
-    # Daisy chain five computers with different args, test which output gets highest value
-    max_signal = 0
-    for perm in permutations(range(0,5)):
-        if args.verbose:
-            print("Trying permutation of phase settings:", perm)
+    computer = IntCode(program.copy())
+    output = computer.compute([])
 
-        signal = 0
-        for phase in perm:
-            computer = IntCode(program.copy())
-            if args.verbose:
-                print("\tUsing phase setting", phase, "and input signal", signal)
-            signal = computer.compute([phase, signal])[0]
-            if args.verbose:
-                print("Output from this instance", signal)
-
-        if signal > max_signal:
-            max_signal = signal
-
-    print("Max thruster signal", max_signal)
+    print("Output:", output)
