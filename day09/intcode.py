@@ -2,11 +2,14 @@
 
 import argparse
 from itertools import permutations
+import numpy
 
 class IntCode:
 
     def __init__( self, program ):
-        self.program = program
+        self.program = numpy.zeros( (100000), dtype=int)
+        for i in range(len(program)):
+            self.program[i] = program[i]
         self.pos = 0
         self.relbase = 0
 
