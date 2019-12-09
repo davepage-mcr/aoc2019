@@ -8,6 +8,7 @@ class IntCode:
     def __init__( self, program ):
         self.program = program
         self.pos = 0
+        self.relbase = 0
 
     def decode_argument(self, argument, mode):
         if args.decode:
@@ -17,10 +18,17 @@ class IntCode:
             if args.decode:
                 print("\tPosition mode;", argument, "is an address containing", self.program[argument])
             return( self.program[argument] )
-        else:
+        elif mode == 2:
+            if args.decode:
+                print("\tRelative base mode;", argument, "is an address containing", self.program[argument + self.relbase])
+            return( self.program[argument + self.relbase] )
+        elif mode == 1:
             if args.decode:
                 print("\tImmediate mode;", argument, "is a value")
             return( argument ) 
+        else:
+            print("Unrecognised mode:", mode)
+            exit(1)
 
     def do_add(self, modes):
         if args.verbose:
@@ -133,6 +141,14 @@ class IntCode:
 
         return([0, 4])
 
+    def do_rbo(self, modes):
+        if args.verbose:
+            print("\t", self.program[self.pos:self.pos+2])
+        arg_a = self.decode_argument( self.program[self.pos+1], modes[0] )
+        self.relbase += arg_a
+
+        return([0, 2])
+
     def compute(self, inputdata):
         self.pos=0
         self.inputdata = inputdata
@@ -163,6 +179,8 @@ class IntCode:
                 inst_len = self.do_lt(modes)
             elif opcode == 8:
                 inst_len = self.do_eq(modes)
+            elif opcode == 9:
+                inst_len = self.do_rbo(modes)
             else:
                 print("Unrecognised opcode", opcode, "at position", self.pos)
                 print(self.program)
