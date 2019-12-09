@@ -55,8 +55,8 @@ class IntCode:
         self.program[pos_t] = arg_a * arg_b
         return( [0, 4] )
 
-    def do_input(self):
-        arg_a = self.program[self.pos+1]
+    def do_input(self, modes):
+        arg_a = self.decode_argument( self.program[self.pos+1], modes[0] )
 
         if len(self.inputdata) == 0:
             print("Want to receive input but we have none!")
@@ -171,7 +171,7 @@ class IntCode:
             elif opcode == 2:
                 inst_len = self.do_mult(modes)
             elif opcode == 3:
-                inst_len = self.do_input()
+                inst_len = self.do_input(modes)
             elif opcode == 4:
                 inst_len = self.do_output(modes)
             elif opcode == 5:
