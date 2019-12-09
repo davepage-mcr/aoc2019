@@ -15,7 +15,7 @@ class IntCode:
 
     def decode_argument(self, argument, mode):
         if args.decode:
-            print("\tDecoding argument", argument, "with mode", mode)
+            print("\tDecoding argument", argument, "with mode", mode, end=':')
 
         if mode == 0:
             if args.decode:
@@ -35,7 +35,7 @@ class IntCode:
 
     def do_add(self, modes):
         if args.verbose:
-            print("\t", self.program[self.pos:self.pos+4])
+            print("\tAdd:", self.program[self.pos:self.pos+4])
         arg_a = self.decode_argument( self.program[self.pos+1], modes[0] )
         arg_b = self.decode_argument( self.program[self.pos+2], modes[1] )
         pos_t = self.program[self.pos+3]
@@ -46,7 +46,7 @@ class IntCode:
 
     def do_mult(self, modes):
         if args.verbose:
-            print("\t", self.program[self.pos:self.pos+4])
+            print("\tMult:", self.program[self.pos:self.pos+4])
         arg_a = self.decode_argument( self.program[self.pos+1], modes[0] )
         arg_b = self.decode_argument( self.program[self.pos+2], modes[1] )
         pos_t = self.program[self.pos+3]
@@ -56,6 +56,8 @@ class IntCode:
         return( [0, 4] )
 
     def do_input(self, modes):
+        if args.verbose:
+            print("\tInput:", self.program[self.pos:self.pos+2])
         arg_a = self.decode_argument( self.program[self.pos+1], modes[0] )
 
         if len(self.inputdata) == 0:
@@ -71,7 +73,7 @@ class IntCode:
 
     def do_output(self, modes):
         if args.verbose:
-            print("\t", self.program[self.pos:self.pos+2])
+            print("\tOutput:", self.program[self.pos:self.pos+2])
         arg_a = self.decode_argument( self.program[self.pos+1], modes[0] )
 
         self.output.append(arg_a)
@@ -80,7 +82,7 @@ class IntCode:
 
     def do_jit(self, modes):
         if args.verbose:
-            print("\t", self.program[self.pos:self.pos+3])
+            print("\tJump-if-true:", self.program[self.pos:self.pos+3])
         arg_a = self.decode_argument( self.program[self.pos+1], modes[0] )
         arg_b = self.decode_argument( self.program[self.pos+2], modes[1] )
 
@@ -95,7 +97,7 @@ class IntCode:
 
     def do_jif(self, modes):
         if args.verbose:
-            print("\t", self.program[self.pos:self.pos+3])
+            print("\tJump-if-false:", self.program[self.pos:self.pos+3])
         arg_a = self.decode_argument( self.program[self.pos+1], modes[0] )
         arg_b = self.decode_argument( self.program[self.pos+2], modes[1] )
 
@@ -110,7 +112,7 @@ class IntCode:
 
     def do_lt(self, modes):
         if args.verbose:
-            print("\t", self.program[self.pos:self.pos+3])
+            print("\tLessthan:", self.program[self.pos:self.pos+4])
         arg_a = self.decode_argument( self.program[self.pos+1], modes[0] )
         arg_b = self.decode_argument( self.program[self.pos+2], modes[1] )
         arg_c = self.program[self.pos+3]
@@ -128,7 +130,7 @@ class IntCode:
 
     def do_eq(self, modes):
         if args.verbose:
-            print("\t", self.program[self.pos:self.pos+3])
+            print("\tEquals:", self.program[self.pos:self.pos+3])
         arg_a = self.decode_argument( self.program[self.pos+1], modes[0] )
         arg_b = self.decode_argument( self.program[self.pos+2], modes[1] )
         arg_c = self.program[self.pos+3]
@@ -146,7 +148,7 @@ class IntCode:
 
     def do_rbo(self, modes):
         if args.verbose:
-            print("\t", self.program[self.pos:self.pos+2])
+            print("\tRelbaseoffset:", self.program[self.pos:self.pos+2])
         arg_a = self.decode_argument( self.program[self.pos+1], modes[0] )
         self.relbase += arg_a
 
