@@ -12,6 +12,7 @@ class IntCode:
             self.program[i] = program[i]
         self.pos = 0
         self.relbase = 0
+        self.running = True
 
     def decode_argument(self, argument, mode):
         if args.decode:
@@ -160,44 +161,50 @@ class IntCode:
         self.output = []
 
         while(1):
-            if args.verbose:
-                print("# Looking for opcode at", self.pos, ":", self.program[self.pos])
-
-            opcode = self.program[self.pos] % 100
-            modes = [ ( self.program[self.pos] // dec ) % 10 for dec in [ 100, 1000, 10000 ] ]
-
-            if opcode == 99:
+            self.step()
+            if not self.running:
                 return(self.output)
-            elif opcode == 1:
-                inst_len = self.do_add(modes)
-            elif opcode == 2:
-                inst_len = self.do_mult(modes)
-            elif opcode == 3:
-                inst_len = self.do_input(modes)
-            elif opcode == 4:
-                inst_len = self.do_output(modes)
-            elif opcode == 5:
-                inst_len = self.do_jit(modes)
-            elif opcode == 6:
-                inst_len = self.do_jif(modes)
-            elif opcode == 7:
-                inst_len = self.do_lt(modes)
-            elif opcode == 8:
-                inst_len = self.do_eq(modes)
-            elif opcode == 9:
-                inst_len = self.do_rbo(modes)
-            else:
-                print("Unrecognised opcode", opcode, "at position", self.pos)
-                print(self.program)
-                exit(1)
 
-            if inst_len[0] == 0:    # We've returned a relative jump for pos
-                self.pos += inst_len[1]
-            elif inst_len[0] == 1:  # Absolute position
-                self.pos = inst_len[1]
-            else:
-                print("Unexpected return type", inst_len[0])
-                exit(1)
+    def step(self):
+        if args.verbose:
+            print("# Looking for opcode at", self.pos, ":", self.program[self.pos])
+
+        opcode = self.program[self.pos] % 100
+        modes = [ ( self.program[self.pos] // dec ) % 10 for dec in [ 100, 1000, 10000 ] ]
+
+        if opcode == 99:
+            self.running = False
+            return(self.output)
+        elif opcode == 1:
+            inst_len = self.do_add(modes)
+        elif opcode == 2:
+            inst_len = self.do_mult(modes)
+        elif opcode == 3:
+            inst_len = self.do_input(modes)
+        elif opcode == 4:
+            inst_len = self.do_output(modes)
+        elif opcode == 5:
+            inst_len = self.do_jit(modes)
+        elif opcode == 6:
+            inst_len = self.do_jif(modes)
+        elif opcode == 7:
+            inst_len = self.do_lt(modes)
+        elif opcode == 8:
+            inst_len = self.do_eq(modes)
+        elif opcode == 9:
+            inst_len = self.do_rbo(modes)
+        else:
+            print("Unrecognised opcode", opcode, "at position", self.pos)
+            print(self.program)
+            exit(1)
+
+        if inst_len[0] == 0:    # We've returned a relative jump for pos
+            self.pos += inst_len[1]
+        elif inst_len[0] == 1:  # Absolute position
+            self.pos = inst_len[1]
+        else:
+            print("Unexpected return type", inst_len[0])
+            exit(1)
 
 # Parse command-line arguments
 parser = argparse.ArgumentParser()
