@@ -2,12 +2,20 @@
 
 import argparse
 import numpy
+import math
 
 # Parse command-line arguments
 parser = argparse.ArgumentParser()
 parser.add_argument("--verbose", help="Print out each instruction as executed", action="store_true")
+parser.add_argument("--part2", help="Activate the GIANT LASER", action="store_true")
 parser.add_argument("filename", help="Star Map")
 args = parser.parse_args()
+
+def getangle(laser, target):
+    vector = ( target[0]-laser[0], target[1]-laser[1] )
+
+    # reverse the y coordinates!
+    return math.degrees( math.atan2( target[0]-laser[0], laser[1]-target[1] ) ) % 360
 
 def smallestvector( x, y ):
     biggestfactor = max(abs(x), abs(y))
@@ -19,17 +27,11 @@ def smallestvector( x, y ):
 
 def visiblefrom(prospect, target):
     vector = ( target[0]-prospect[0], target[1]-prospect[1] )
-    if args.verbose:
-        print("Testing whether", prospect, "can see", target, "at vector", vector)
     # Now find the smallest fraction of the vector which is still an integer
     step = smallestvector( vector[0], vector[1] )
     if step == vector:
-        if args.verbose:
-            print("\tOne integer step to target, so we can see it")
         return True
 
-    if args.verbose:
-        print("\tStepping", step, "from", prospect)
     x = prospect[0]
     y = prospect[1]
 
@@ -38,13 +40,9 @@ def visiblefrom(prospect, target):
         y += step[1]
     
         if x == target[0] and y == target[1]:
-            if args.verbose:
-                print("\tNothing in the way by stepping", step)
             return True
 
         if ( x, y ) in asteroids:
-            if args.verbose:
-                print("\tHit asteroid at", (x,y), "on way to", target)
             return False
 
 
@@ -82,3 +80,32 @@ for prospect in asteroids:
         max_prospect = prospect
 
 print("Best prospect is", max_prospect, "which can see", max_visible, "asteroids")
+
+if not args.part2:
+    exit(0)
+
+# Now it's giant death laser time!
+print("Firing up the giant death laser!")
+
+laser = max_prospect
+
+victim = 1
+while len(asteroids) > 1:
+    visible_asteroids = {}              # dict of (coordinates) => angle, we can sort by angle later
+    for target in asteroids:
+        # Iterate over the asteroids, see which ones we can see, and what angle they're at from us
+        if target == laser:
+            # Do not vaporise ourselves!
+            continue
+        if visiblefrom(laser, target):
+            visible_asteroids[target] = getangle(laser, target)
+
+    visible_by_angle = sorted(visible_asteroids, key=visible_asteroids.__getitem__)
+
+    for target in visible_by_angle:
+        print(target,"at", visible_asteroids[target], "is victim number", victim)
+        asteroids.remove(target)
+
+        victim += 1
+
+    print("Next round?")
