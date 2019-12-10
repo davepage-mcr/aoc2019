@@ -1,5 +1,8 @@
 #!/usr/bin/python3
 
+import sys
+sys.path.append("../lib")
+
 import argparse
 from itertools import permutations
 import numpy
